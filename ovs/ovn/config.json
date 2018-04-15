@@ -1,0 +1,94 @@
+{
+    "route" : [
+        {
+            "name": "route1",
+            "dhcps"     : [
+                {
+                    "name" : "dhcp1",
+                    "cidr"  : "172.16.255.128/26",
+                    "options" : {
+                        "sw_id"         : "sw1",
+                        "server_id"     : "172.16.255.129",
+                        "server_mac"    : "02:ac:10:ff:01:29",
+                        "lease_time"    : "3600",
+                        "router"        : "172.16.255.129"
+                    }
+                },
+                {
+                    "name" : "dhcp2",
+                    "cidr"  : "172.16.255.192/26",
+                    "options" : {
+                        "sw_id"         : "sw2",
+                        "server_id"     : "172.16.255.193",
+                        "server_mac"    : "02:ac:10:ff:01:93",
+                        "lease_time"    : "3600",
+                        "router"        : "172.16.255.193"
+                    }
+                }
+            ],
+            "switches"  : [
+                {
+                    "name"          : "sw1",
+                    "sw-route"      : "r-s1",
+                    "route-sw"      : "s1-r",
+                    "type"          : "route",
+                    "ip"            : "172.16.255.129/26",
+                    "mac"           : "02:ac:10:ff:01:29"
+                    "nodes" [
+                        {
+                            "name"      : "sw1-1",
+                            "ip"        : "172.16.255.130",
+                            "mac"       : "02:ac:10:ff:01:30",
+                            "to-br-int" : "sw1-1",
+                            "type"      : "container"
+                            "node-sw"   : "n1-s1"
+                            "sw-node"   : "n1-s1"
+                            "dhcp_uuid" : "dhcp1"
+                        },
+                        {
+                            "name"      : "sw1-2",
+                            "ip"        : "172.16.255.131",
+                            "mac"       : "02:ac:10:ff:01:31",
+                            "to-br-int" : "sw1-2",
+                            "type"      : "container"
+                            "node-sw"   : "n2-s1"
+                            "sw-node"   : "s1-n2"
+                            "dhcp_uuid" : "dhcp1"
+                        }
+                    ]
+                },
+                {
+                    "name"          : "sw2",
+                    "sw-route"      : "r-s2",
+                    "route-sw"      : "s2-r",
+                    "type"          : "route",
+                    "ip"            : "172.16.255.193/26",
+                    "mac"           : "02:ac:10:ff:01:93"
+                    "nodes" [
+                        {
+                            "name"      : "n1",
+                            "ip"        : "172.16.255.194",
+                            "mac"       : "02:ac:10:ff:01:94",
+                            "to-br-int" : "sw2-n1",
+                            "type"      : "container"
+                            "node-sw"   : "n1-sw2"
+                            "sw-node"   : "sw2-n1"
+                            "dhcp_uuid" : "dhcp2"
+                        },
+                        {
+                            "name"      : "n2",
+                            "ip"        : "172.16.255.195",
+                            "mac"       : "02:ac:10:ff:01:95",
+                            "dhcp_uuid" : "true"
+                            "to-br-int" : "sw2-n2",
+                            "type"      : "container"
+                            "node-sw"   : "n2-sw1"
+                            "sw-node"   : "sw1-n2"
+                            "dhcp_uuid" : "dhcp2"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,351 @@
+
+## 200 万连接情况下消耗情况内存消耗分析
+
+### 查看内存占用情况
+
+1. 整体内存占用情况
+
+free
+                  total        used        free      shared  buff/cache   available
+    Mem:       15960672     8454692     4225720       66688     3280260     7158320
+    Swap:             0           0           0
+
+2. 共享内存
+
+ ipcs -m
+
+3. slab 占用
+
+ Active / Total Objects (% used)    : 1055574 / 1071076 (98.6%)
+ Active / Total Slabs (% used)      : 29941 / 29941 (100.0%)
+ Active / Total Caches (% used)     : 65 / 98 (66.3%)
+ Active / Total Size (% used)       : 168642.91K / 173799.47K (97.0%)
+ Minimum / Average / Maximum Object : 0.01K / 0.16K / 15.88K
+
+  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+692094 690824  99%    0.10K  17746       39     70984K buffer_head
+116550 115117  98%    0.19K   5550       21     22200K dentry
+ 62080  59579  95%    0.06K    970       64      3880K kmalloc-64
+ 24984  24984 100%    0.11K    694       36      2776K sysfs_dir_cache
+ 21240  21240 100%    1.06K    708       30     22656K xfs_inode
+ 15064  15064 100%    0.57K    538       28      8608K radix_tree_node
+ 13209  12759  96%    0.08K    259       51      1036K selinux_inode_security
+ 12906  12783  99%    0.58K    478       27      7648K inode_cache
+ 11726  11726 100%    0.15K    451       26      1804K xfs_ili
+  9728   8466  87%    0.03K     76      128       304K kmalloc-32
+  8192   8192 100%    0.01K     16      512        64K kmalloc-8
+  6912   6912 100%    0.06K    108       64       432K anon_vma
+  6888   6229  90%    0.64K    287       24      4592K proc_inode_cache
+  6623   5745  86%    0.21K    179       37      1432K vm_area_struct
+  5920   2995  50%    0.25K    185       32      1480K kmalloc-256
+  5120   5120 100%    0.02K     20      256        80K kmalloc-16
+  4960   4623  93%    0.12K    155       32       620K kmalloc-128
+  4648   4648 100%    0.07K     83       56       332K Acpi-ParseExt
+  4242   3356  79%    0.19K    202       21       808K kmalloc-192
+  3424   2694  78%    1.00K    107       32      3424K kmalloc-1024
+  3360   2415  71%    0.50K    105       32      1680K kmalloc-512
+  3162   3162 100%    0.04K     31      102       124K Acpi-Namespace
+  3087   2912  94%    0.38K    147       21      1176K blkdev_requests
+  3060   3060 100%    0.05K     36       85       144K shared_policy_node
+  2190   2190 100%    0.05K     30       73       120K uhci_urb_priv
+  1932   1932 100%    0.09K     46       42       184K kmalloc-96
+  1755   1513  86%    0.81K     45       39      1440K task_xstate
+  1620   1470  90%    0.53K     54       30       864K sw_flow
+  1360   1360 100%    0.02K      8      170        32K fsnotify_event_holder
+  1176   1176 100%    0.66K     49       24       784K shmem_inode_cache
+  1104    930  84%    2.00K     69       16      2208K kmalloc-2048
+   840    840 100%    1.12K     30       28       960K signal_cache
+   680    680 100%    0.12K     20       34        80K fsnotify_event
+   675    675 100%    0.62K     27       25       432K sock_inode_cache
+   638    473  74%    2.88K     58       11      1856K task_struct
+   595    595 100%    0.23K     17       35       136K cfq_queue
+   584    544  93%    4.00K     73        8      2336K kmalloc-4096
+   555    480  86%    2.06K     37       15      1184K sighand_cache
+   448    448 100%    0.06K      7       64        28K kmem_cache_node
+   418    418 100%    0.18K     19       22        76K xfs_log_ticket
+   374    374 100%    0.94K     11       34       352K RAW
+   360    360 100%    0.44K     10       36       160K scsi_cmd_cache
+   360    360 100%    0.39K     18       20       144K xfs_efd_item
+   345    345 100%    2.06K     23       15       736K idr_layer_cache
+   320    320 100%    0.25K     10       32        80K tw_sock_TCPv6
+   312    312 100%    0.10K      8       39        32K blkdev_ioc
+   312    312 100%    0.20K      8       39        64K xfs_btree_cur
+   272    272 100%    0.47K      8       34       128K xfs_da_state
+
+ Active / Total Objects (% used)    : 1054273 / 1069547 (98.6%)
+ Active / Total Slabs (% used)      : 29919 / 29919 (100.0%)
+ Active / Total Caches (% used)     : 65 / 98 (66.3%)
+ Active / Total Size (% used)       : 168498.49K / 173738.41K (97.0%)
+ Minimum / Average / Maximum Object : 0.01K / 0.16K / 15.88K
+
+  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+692094 690845  99%    0.10K  17746       39     70984K buffer_head
+116550 115050  98%    0.19K   5550       21     22200K dentry
+ 62080  59584  95%    0.06K    970       64      3880K kmalloc-64
+ 24984  24984 100%    0.11K    694       36      2776K sysfs_dir_cache
+ 21240  21240 100%    1.06K    708       30     22656K xfs_inode
+ 15064  15064 100%    0.57K    538       28      8608K radix_tree_node
+ 13209  12759  96%    0.08K    259       51      1036K selinux_inode_security
+ 12906  12783  99%    0.58K    478       27      7648K inode_cache
+ 11726  11726 100%    0.15K    451       26      1804K xfs_ili
+  9728   8466  87%    0.03K     76      128       304K kmalloc-32
+  8192   8192 100%    0.01K     16      512        64K kmalloc-8
+  6888   6133  89%    0.64K    287       24      4592K proc_inode_cache
+  6623   6191  93%    0.21K    179       37      1432K vm_area_struct
+  5920   3040  51%    0.25K    185       32      1480K kmalloc-256
+  5312   5312 100%    0.06K     83       64       332K anon_vma
+  5120   5120 100%    0.02K     20      256        80K kmalloc-16
+  4864   4181  85%    0.12K    152       32       608K kmalloc-128
+  4648   4648 100%    0.07K     83       56       332K Acpi-ParseExt
+  4347   3860  88%    0.19K    207       21       828K kmalloc-192
+  3424   2694  78%    1.00K    107       32      3424K kmalloc-1024
+  3360   2415  71%    0.50K    105       32      1680K kmalloc-512
+  3162   3162 100%    0.04K     31      102       124K Acpi-Namespace
+  3087   2912  94%    0.38K    147       21      1176K blkdev_requests
+  3060   3060 100%    0.05K     36       85       144K shared_policy_node
+  2190   2190 100%    0.05K     30       73       120K uhci_urb_priv
+  1932   1932 100%    0.09K     46       42       184K kmalloc-96
+  1755   1529  87%    0.81K     45       39      1440K task_xstate
+  1620   1470  90%    0.53K     54       30       864K sw_flow
+  1360   1360 100%    0.02K      8      170        32K fsnotify_event_holder
+  1176   1176 100%    0.66K     49       24       784K shmem_inode_cache
+  1104    930  84%    2.00K     69       16      2208K kmalloc-2048
+   924    696  75%    1.12K     33       28      1056K signal_cache
+   680    680 100%    0.12K     20       34        80K fsnotify_event
+   675    675 100%    0.62K     27       25       432K sock_inode_cache
+   616    484  78%    2.88K     56       11      1792K task_struct
+   595    595 100%    0.23K     17       35       136K cfq_queue
+   584    544  93%    4.00K     73        8      2336K kmalloc-4096
+   555    480  86%    2.06K     37       15      1184K sighand_cache
+   448    448 100%    0.06K      7       64        28K kmem_cache_node
+   418    418 100%    0.18K     19       22        76K xfs_log_ticket
+   374    374 100%    0.94K     11       34       352K RAW
+   360    360 100%    0.44K     10       36       160K scsi_cmd_cache
+   360    360 100%    0.39K     18       20       144K xfs_efd_item
+   345    345 100%    2.06K     23       15       736K idr_layer_cache
+   320    320 100%    0.25K     10       32        80K tw_sock_TCPv6
+   312    312 100%    0.10K      8       39        32K blkdev_ioc
+   312    312 100%    0.20K      8       39        64K xfs_btree_cur
+   272    272 100%    0.47K      8       34       128K xfs_da_state
+
+
+### 查看 ovs 进程内存
+
+
+pmap -X 19937
+
+    19937:   ovs-vswitchd unix:/usr/local/var/run/openvswitch/db.sock -vconsole:emer -vsyslog:err -vfile:info --mlockall --no-chdir --pidfile=/usr/local/var/run/openvswitch/ovs-vswitchd.pid --monitor --log-file=/usr/local/var/log/openvswitch/ovs-vswitchd.log
+         Address Perm   Offset Device     Inode    Size     Rss     Pss Referenced Anonymous Swap  Locked Mapping
+        00400000 r-xp 00000000  fd:00  70389090    1792    1792    1532       1792         0    0    1532 ovs-vswitchd
+        007bf000 r--p 001bf000  fd:00  70389090       4       4       2          4         4    0       2 ovs-vswitchd
+        007c0000 rw-p 001c0000  fd:00  70389090     116     116     116        116       116    0     116 ovs-vswitchd
+        007dd000 rw-p 00000000  00:00         0      28      28      28         28        28    0      28 
+        014f8000 rw-p 00000000  00:00         0     132     132     132        132       132    0     132 [heap]
+        01519000 rw-p 00000000  00:00         0 6082376 6082376 6082376    6082376   6082376    0 6082376 [heap]
+    7f9584000000 rw-p 00000000  00:00         0   65536   65536   65536      65536     65536    0   65536 
+    7f958c000000 rw-p 00000000  00:00         0   65536   65536   65536      65536     65536    0   65536 
+    7f9590000000 rw-p 00000000  00:00         0   65536   65536   65536      65536     65536    0   65536 
+    7f9594000000 rw-p 00000000  00:00         0   65536   65536   65536      65536     65536    0   65536 
+    7f959c000000 rw-p 00000000  00:00         0   55144   55144   55144      55144     55144    0   55144 
+    7f959f5da000 ---p 00000000  00:00         0   10392       0       0          0         0    0       0 
+    7f95a4000000 rw-p 00000000  00:00         0   65536   65536   65536      65536     65536    0   65536 
+    7f95ac000000 rw-p 00000000  00:00         0   57884   57884   57884      57884     57884    0   57884 
+    7f95af887000 ---p 00000000  00:00         0    7652       0       0          0         0    0       0 
+    7f95b4000000 rw-p 00000000  00:00         0   53464   53464   53464      53464     53464    0   53464 
+    7f95b7436000 ---p 00000000  00:00         0   12072       0       0          0         0    0       0 
+    7f95bc000000 rw-p 00000000  00:00         0   65536   65536   65536      65536     65536    0   65536 
+    7f95c4000000 rw-p 00000000  00:00         0     244     244     244        244       244    0     244 
+    7f95c403d000 ---p 00000000  00:00         0   65292       0       0          0         0    0       0 
+    7f95c9fff000 rw-p 00000000  00:00         0   32772   32772   32772      32772     32772    0   32772 
+    7f95cc000000 rw-p 00000000  00:00         0   65536   65536   65536      65536     65536    0   65536 
+    7f95d2b25000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d2b26000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:20137]
+    7f95d3326000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d3327000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:12213]
+    7f95d3b27000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d3b28000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:12214]
+    7f95d4328000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d4329000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:12215]
+    7f95d4b29000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d4b2a000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:12216]
+    7f95d532a000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d532b000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:12220]
+    7f95d5b2b000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d5b2c000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:12219]
+    7f95d632c000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d632d000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:12218]
+    7f95d6b2d000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d6b2e000 rw-p 00000000  00:00         0    8192    8192    8192       8192      8192    0    8192 [stack:12217]
+    7f95d732e000 r-xp 00000000  fd:00 201328882    1752    1752     836       1752         0    0     836 libc-2.17.so
+    7f95d74e4000 ---p 001b6000  fd:00 201328882    2048       0       0          0         0    0       0 libc-2.17.so
+    7f95d76e4000 r--p 001b6000  fd:00 201328882      16      16       8         16        16    0       8 libc-2.17.so
+    7f95d76e8000 rw-p 001ba000  fd:00 201328882       8       8       8          8         8    0       8 libc-2.17.so
+    7f95d76ea000 rw-p 00000000  00:00         0      20      20      20         20        20    0      20 
+    7f95d76ef000 r-xp 00000000  fd:00 202138232    1024    1024     909       1024         0    0     909 libm-2.17.so
+    7f95d77ef000 ---p 00100000  fd:00 202138232    2048       0       0          0         0    0       0 libm-2.17.so
+    7f95d79ef000 r--p 00100000  fd:00 202138232       4       4       2          4         4    0       2 libm-2.17.so
+    7f95d79f0000 rw-p 00101000  fd:00 202138232       4       4       4          4         4    0       4 libm-2.17.so
+    7f95d79f1000 r-xp 00000000  fd:00 201328905      28      28      12         28         0    0      12 librt-2.17.so
+    7f95d79f8000 ---p 00007000  fd:00 201328905    2044       0       0          0         0    0       0 librt-2.17.so
+    7f95d7bf7000 r--p 00006000  fd:00 201328905       4       4       2          4         4    0       2 librt-2.17.so
+    7f95d7bf8000 rw-p 00007000  fd:00 201328905       4       4       4          4         4    0       4 librt-2.17.so
+    7f95d7bf9000 r-xp 00000000  fd:00 201328899      92      92      18         92         0    0      18 libpthread-2.17.so
+    7f95d7c10000 ---p 00017000  fd:00 201328899    2044       0       0          0         0    0       0 libpthread-2.17.so
+    7f95d7e0f000 r--p 00016000  fd:00 201328899       4       4       2          4         4    0       2 libpthread-2.17.so
+    7f95d7e10000 rw-p 00017000  fd:00 201328899       4       4       4          4         4    0       4 libpthread-2.17.so
+    7f95d7e11000 rw-p 00000000  00:00         0      16      16      16         16        16    0      16 
+    7f95d7e15000 r-xp 00000000  fd:00 201326730     128     128      13        128         0    0      13 ld-2.17.so
+    7f95d801f000 ---p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d8020000 rw-p 00000000  00:00         0      28      28      28         28        28    0      28 [stack:2762]
+    7f95d8027000 rw-p 00000000  00:00         0      16      16      16         16        16    0      16 
+    7f95d8032000 rw-p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d8033000 rw-p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7f95d8034000 r--p 0001f000  fd:00 201326730       4       4       2          4         4    0       2 ld-2.17.so
+    7f95d8035000 rw-p 00020000  fd:00 201326730       4       4       4          4         4    0       4 ld-2.17.so
+    7f95d8036000 rw-p 00000000  00:00         0       4       4       4          4         4    0       4 
+    7ffcc2ba4000 rw-p 00000000  00:00         0     192     136     136        136       136    0     136 [stack]
+    7ffcc2bdb000 r-xp 00000000  00:00         0       8       8       4          8         0    0       0 [vdso]
+ffffffffff600000 r-xp 00000000  00:00         0       4       0       0          0         0    0       0 [vsyscall]
+                                                ======= ======= ======= ========== ========= ==== ======= 
+                                                6923444 6819792 6818276    6819792   6814968    0 6818272 KB 
+
+
+$ cat /proc/19937/status
+
+    Name:	ovs-vswitchd
+    State:	S (sleeping)
+    Tgid:	19937
+    Ngid:	0
+    Pid:	19937
+    PPid:	19917
+    TracerPid:	0
+    Uid:	0	0	0	0
+    Gid:	0	0	0	0
+    FDSize:	128
+    Groups:	0 
+    VmPeak:	 8872924 kB
+    VmSize:	 6923440 kB
+    VmLck:	 6923432 kB
+    VmPin:	       0 kB
+    VmHWM:	 8763800 kB
+    VmRSS:	 6819596 kB
+    VmData:	 6910072 kB
+    VmStk:	     192 kB
+    VmExe:	    1792 kB
+    VmLib:	    3024 kB
+    VmPTE:	   13372 kB
+    VmSwap:	       0 kB
+    Threads:	11
+    SigQ:	0/62264
+    SigPnd:	0000000000000000
+    ShdPnd:	0000000000000000
+    SigBlk:	0000000000000000
+    SigIgn:	0000000001001000
+    SigCgt:	0000000180006003
+    CapInh:	0000000000000000
+    CapPrm:	0000001fffffffff
+    CapEff:	0000001fffffffff
+    CapBnd:	0000001fffffffff
+    Seccomp:	0
+    Cpus_allowed:	ff
+    Cpus_allowed_list:	0-7
+    Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+    Mems_allowed_list:	0
+    voluntary_ctxt_switches:	52142380
+    nonvoluntary_ctxt_switches:	4391578
+
+### 回收内存
+
+$ free -h
+
+                  total        used        free      shared  buff/cache   available
+    Mem:            15G        8.2G        3.9G         73M        3.1G        6.7G
+    Swap:            0B          0B          0B
+
+$ echo 1 > /proc/sys/vm/drop_caches
+
+$ free -h
+
+                  total        used        free      shared  buff/cache   available
+    Mem:            15G        8.2G        6.8G         73M        219M        6.8G
+    Swap:            0B          0B          0B
+
+$ echo 2 > /proc/sys/vm/drop_caches
+
+$ free -h
+
+                  total        used        free      shared  buff/cache   available
+    Mem:            15G        8.2G        6.9G         73M        174M        6.8G
+    Swap:            0B          0B          0B
+
+$ echo 3 > /proc/sys/vm/drop_caches
+
+$ free -h
+
+                  total        used        free      shared  buff/cache   available
+    Mem:            15G        8.2G        6.9G         73M        177M        6.8G
+    Swap:            0B          0B          0B
+
+从 htop 上 ovs 消耗的内存仍然是 44%
+
+
+## 重启 ovs 的情况
+
+
+slabtop
+
+    Active / Total Objects (% used)    : 175322 / 197670 (88.7%)
+     Active / Total Slabs (% used)      : 5262 / 5262 (100.0%)
+     Active / Total Caches (% used)     : 65 / 98 (66.3%)
+     Active / Total Size (% used)       : 42597.57K / 50060.81K (85.1%)
+     Minimum / Average / Maximum Object : 0.01K / 0.25K / 15.88K
+
+      OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME                   
+     25128  25128 100%    0.11K    698       36      2792K sysfs_dir_cache        
+     22464  15583  69%    0.06K    351       64      1404K kmalloc-64             
+     18396  16271  88%    0.19K    876       21      3504K dentry                 
+     13209  12759  96%    0.08K    259       51      1036K selinux_inode_security 
+      9728   8461  86%    0.03K     76      128       304K kmalloc-32             
+      9666   9005  93%    0.58K    358       27      5728K inode_cache            
+      8192   8192 100%    0.01K     16      512        64K kmalloc-8              
+      7178   6558  91%    0.21K    194       37      1552K vm_area_struct         
+      6208   6208 100%    0.06K     97       64       388K anon_vma               
+      5600   3481  62%    0.25K    175       32      1400K kmalloc-256            
+      5120   5120 100%    0.02K     20      256        80K kmalloc-16             
+      4992   4490  89%    0.12K    156       32       624K kmalloc-128            
+      4648   4648 100%    0.07K     83       56       332K Acpi-ParseExt          
+      4396   2459  55%    0.57K    157       28      2512K radix_tree_node        
+      4347   3766  86%    0.19K    207       21       828K kmalloc-192            
+      4095   3884  94%    0.10K    105       39       420K buffer_head            
+      3360   2700  80%    1.00K    105       32      3360K kmalloc-1024           
+      3296   2407  73%    0.50K    103       32      1648K kmalloc-512            
+      3162   3162 100%    0.04K     31      102       124K Acpi-Namespace         
+      3144   2979  94%    0.64K    131       24      2096K proc_inode_cache       
+      3060   3060 100%    0.05K     36       85       144K shared_policy_node     
+      2880   1336  46%    1.06K     96       30      3072K xfs_inode              
+      2444   1519  62%    0.15K     94       26       376K xfs_ili                
+      2190   2190 100%    0.05K     30       73       120K uhci_urb_priv          
+      1932   1932 100%    0.09K     46       42       184K kmalloc-96             
+      1755   1689  96%    0.81K     45       39      1440K task_xstate            
+      1620   1470  90%    0.53K     54       30       864K sw_flow                
+      1360   1360 100%    0.02K      8      170        32K fsnotify_event_holder  
+      1218   1090  89%    0.38K     58       21       464K blkdev_requests        
+      1176   1176 100%    0.66K     49       24       784K shmem_inode_cache      
+      1040    900  86%    2.00K     65       16      2080K kmalloc-2048           
+       980    894  91%    1.12K     35       28      1120K signal_cache           
+       700    700 100%    0.62K     28       25       448K sock_inode_cache       
+       680    680 100%    0.12K     20       34        80K fsnotify_event         
+       627    576  91%    2.88K     57       11      1824K task_struct            
+       595    595 100%    0.23K     17       35       136K cfq_queue              
+       555    486  87%    2.06K     37       15      1184K sighand_cache          
+       448    448 100%    0.06K      7       64        28K kmem_cache_node        
+       418    418 100%    0.18K     19       22        76K xfs_log_ticket         
+       374    374 100%    0.94K     11       34       352K RAW                    
+       360    360 100%    0.44K     10       36       160K scsi_cmd_cache         
+       360    360 100%    0.39K     18       20       144K xfs_efd_item           
+       345    345 100%    2.06K     23       15       736K idr_layer_cache        
+       336    297  88%    4.00K     42        8      1344K kmalloc-4096           
+       320    320 100%    0.25K     10       32        80K tw_sock_TCPv6          
+       312    312 100%    0.10K      8       39        32K blkdev_ioc             
+       312    312 100%    0.20K      8       39        64K xfs_btree_cur          
+       272    272 100%    0.47K      8       34       128K xfs_da_state          

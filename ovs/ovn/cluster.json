@@ -1,0 +1,213 @@
+{
+    "doc" : {
+        "route " : "route_id, ip, mac of logical_switches are optional, it will be underlay layer-2 network if that",
+        "logical_switches" : "id, name, master_id must be specific",
+        "nodes"  : "must be specific, id, name, ip, port, manage_ip must be specific"
+    },
+    "nodes" : [
+        {
+            "ovn_master" : {
+                "id"        : "c1",
+                "name"      : "c1",
+                "ip"        : "10.127.0.2",
+                "port"      : "6642",
+                "manage_ip" : "10.127.0.2"
+            },
+            "ovn_slave" : [
+                {
+                    "id"        : "host1",
+                    "name"      : "host1",
+                    "ip"        : "10.127.0.3",
+                    "manage_ip" : "10.127.0.3"
+                },
+                {
+                    "id"        : "host2",
+                    "name"      : "host2",
+                    "ip"        : "10.127.0.4",
+                    "manage_ip" : "10.127.0.4"
+                }
+            ]
+        }
+    ],
+    "logical_routes" : [
+        {
+            "id"            : "r1",
+            "name"          : "r1",
+            "master_id"     : "c1",
+            "ports"         : [
+                {
+                    "id"    : "sw1",
+                    "name"  : "r1-sw1",
+                    "ip"    : "172.16.255.129/26",
+                    "mac"   : "02:ac:10:ff:01:29"
+                },
+                {
+                    "id"    : "sw2",
+                    "name"  : "r1-sw2",
+                    "ip"    : "172.16.255.193/26",
+                    "mac"   : "02:ac:10:ff:01:93"
+                },
+                {
+                    "id"    : "rg",
+                    "name"  : "r1-rg",
+                    "ip"    : "172.16.255.2/26",
+                    "mac"   : "02:ac:10:ff:00:02"
+                }
+            ],
+            "routes"        : [
+                {
+                    "dest" : "0.0.0.0/0",
+                    "via"  : "172.16.255.1"
+                }
+            ]
+        },
+        {
+            "id"            : "rg",
+            "name"          : "rg",
+            "master_id"     : "c1",
+            "ports"         : [
+                {
+                    "id"    : "sw3",
+                    "name"  : "rg-sw3",
+                    "ip"    : "172.16.255.1",
+                    "mac"   : "02:ac:10:ff:00:01"
+                },
+                {
+                    "id"    : "sw4",
+                    "name"    : "rg-sw4"
+                    "ip"    : "172.16.255.129"
+                }
+            ]
+        }
+    ],
+    "logical_switches"  : [
+        {
+            "id"            : "sw1",
+            "name"          : "sw1",
+            "master_id"     : "c1",
+            "ports"         : [
+                {
+                    "id"    : "s1h1",
+                    "type"  : "host"
+                },
+                {
+                    "id"    : "s1h2",
+                    "type"  : "host"
+                },
+                {
+                    "id"    : "r1",
+                    "type"  : "route"
+                }
+            ],
+            "dhcp"          : {
+                "cidr"          : "172.16.255.128/26",
+                "lease_time"    : "3600"
+            }
+        },
+        {
+            "id"            : "sw2",
+            "name"          : "sw2",
+            "master_id"     : "c1",
+            "ports"         : [
+                {
+                    "id"    : "s2h1",
+                    "dhcp"          : {
+                        "cidr"          : "172.16.255.192/26",
+                        "lease_time"    : "3600"
+                    }
+                },
+                {
+                    "id"    : "s2h2"
+                    "dhcp"          : {
+                        "cidr"          : "172.16.255.192/26",
+                        "lease_time"    : "3600"
+                    }
+                },
+                {
+                    "id"    : "r1"
+                }
+            ],
+        },
+        {
+            "id"            : "sw3",
+            "name"          : "sw3",
+            "master_id"     : "c1",
+            "ports"         : [
+                {
+                    "id"    : "r1"
+                },
+                {
+                    "id"    : "rg"
+                }
+            ]
+        },
+        {
+            "id"            : "sw4",
+            "name"          : "sw4",
+            "master_id"     : "c1",
+            "ports"         : [
+                {
+                    "id"    : "rg"
+                }
+            ]
+        }
+    ],
+    "virtual_hosts" : [
+        {
+            "id"        : "s1h1",
+            "name"      : "s1h1",
+            "slave_id"  : "host1",
+            "ip"        : "172.16.255.130",
+            "mac"       : "02:ac:10:ff:01:30",
+            "type"      : "namespace",
+            "dhcp_flag" : "true",
+            "switches"  : [
+                {
+                    "id" : "sw1"
+                }
+            ]
+        },
+        {
+            "id"        : "s1h2",
+            "name"      : "s1h2",
+            "slave_id"  : "host1",
+            "ip"        : "172.16.255.131",
+            "mac"       : "02:ac:10:ff:01:31",
+            "type"      : "namespace",
+            "dhcp_flag" : "true",
+            "switches"  : [
+                {
+                    "id" : "sw1"
+                }
+            ]
+        },
+        {
+            "id"        : "s2h1",
+            "name"      : "s2h1",
+            "slave_id"  : "host2",
+            "ip"        : "172.16.255.194",
+            "mac"       : "02:ac:10:ff:01:94",
+            "type"      : "namespace",
+            "dhcp_flag" : "true",
+            "switches"  : [
+                {
+                    "id" : "sw1"
+                }
+            ]
+        },
+        {
+            "id"        : "s2h2",
+            "name"      : "s2h2",
+            "slave_id"  : "host2",
+            "ip"        : "172.16.255.195",
+            "mac"       : "02:ac:10:ff:01:95",
+            "type"      : "namespace",
+            "dhcp_flag" : "true"
+            "switches"  : [
+                {
+                    "id" : "sw1"
+                }
+            ]
+        }
+    ]
+}
